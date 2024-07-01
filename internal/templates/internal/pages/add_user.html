@@ -1,0 +1,35 @@
+{% extends "internal/layout.html" %}
+
+{% load i18n %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="card">
+        <div class="card-body">
+            <form method="post" action="{{ request.path }}">
+                {% csrf_token %}
+                {% if messages %}
+                    {% for message in messages %}
+                      <div class="alert alert-danger" role="alert">{{ message|safe }}</div>
+                    {% endfor %}
+                {% endif %}
+
+                <label for="username" class="form-label">
+                    {% trans "Username" %}
+                </label>
+                <input type="text" class="form-control" id="username" 
+                    name="username" placeholder="{% trans "John" %}">
+
+                <label for="password" class="form-label mt-3">
+                    {% trans "Password" %}
+                </label>
+                <input type="password" class="form-control" id="password" 
+                    name="password" placeholder="******">
+                <button type="submit" class="btn btn-primary mt-3">
+                    {% trans "Submit" %}
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

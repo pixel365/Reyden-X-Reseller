@@ -1,0 +1,23 @@
+{
+  "extends": "./node_modules/gts/tsconfig-google.json",
+  "compileOnSave": true,
+  "compilerOptions": {
+    "module": "ES6",
+    "target": "ES5",
+    "removeComments": true,
+    "sourceMap": false,
+    "rootDir": ".",
+    "lib": [
+      "es5",
+      "es6",
+      "es2021.intl",
+      "DOM"
+    ],
+    "noEmitOnError": true,
+    "moduleResolution": "Node",
+    "allowJs": true
+  },
+  "files": [
+    "internal/src/ts/index.ts",
+  ]
+}

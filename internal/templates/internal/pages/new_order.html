@@ -1,0 +1,187 @@
+{% extends "internal/layout.html" %}
+
+{% load i18n %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row mb-3 shown" style="display:none">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5>
+                        {% trans "Checking Task Status" %}
+                        <div class="spinner-border spinner-border-sm text-primary" role="status" id="loader"></div>
+                    </h5>
+                    <div id="taskProgress" class="mt-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form method="post" action="{{ request.path }}" class="row removable" id="newOrderForm" 
+        data-platform="{{ platform }}"
+        data-prices="{{ prices }}"
+        data-categories="{{ categories }}"
+        data-csrf="{{ csrf_token }}">
+        <div class="col-lg-8 mb-4">
+            <div class="card mb-4">
+                <div class="card-body row g-4">
+                    <div class="card-title">
+                        <h5>{% trans "Channel information" %}</h5>
+                    </div>
+                    <div class="mt-0">
+                        {% include "internal/include/content/"|add:platform|add:"_channel_input.html" %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body row g-4">
+                    <div class="card-title">
+                        <h5>{% trans "Order parameters" %}</h5>
+                    </div>
+                    <label for="channelUrl" class="form-label mt-0">
+                        {% trans "Order category" %}
+                    </label>
+                    <div class="mt-0">
+                        <div class="row" id="priceCategories"></div>
+                    </div>
+                    <div class="mt-3">
+                        <label for="tariffSelect" class="form-label">
+                            {% trans "Geoparameters" %}
+                        </label>
+                        <select id="tariffSelect" class="form-select form-select"></select>
+                    </div>
+                    <div class="mt-3">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div>
+                                    <label for="viewers" class="form-label">
+                                        {% trans "Number of viewers" %}
+                                    </label>
+                                    <input type="number" class="form-control" 
+                                        id="viewers" value="0">
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div>
+                                    <label for="views" class="form-label">
+                                        {% trans "Number of views" %}
+                                    </label>
+                                    <input type="number" class="form-control" 
+                                        id="views" value="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="smoothGain">
+                                    <label class="form-check-label" for="smoothGain">
+                                        {% trans "Smooth gain of viewers after the start" %}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-12" id="smoothPeriodArea" style="display:none">
+                                <div>
+                                    <label for="smoothPeriod" class="form-label">
+                                        {% trans "Period of smooth gain of viewers" %}
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="number" id="smoothPeriod" class="form-control" value="10">
+                                        <span class="input-group-text">
+                                            {% trans "minutes" %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body row g-4">
+                    <div class="card-title">
+                        <h5>{% trans "Other order options" %}</h5>
+                    </div>
+                    <div class="mt-0 mb-3">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="launch" class="form-label">
+                                    {% trans "Launch parameters" %}
+                                </label>
+                                <select id="launch" class="form-select form-select">
+                                    <option value="auto">
+                                        {% trans "Automatically when the stream is on" %}
+                                    </option>
+                                    <option value="manual">
+                                        {% trans "Manual launch" %}
+                                    </option>
+                                    <option value="delay">
+                                        {% trans "Delayed launch after the stream begins" %}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-12 mt-3" id="delayLaunchArea" style="display:none">
+                                <div>
+                                    <label for="delayLaunchPeriod" class="form-label">
+                                        {% trans "Delay the launch for" %}
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="number" id="delayLaunchPeriod" class="form-control" value="10">
+                                        <span class="input-group-text">
+                                            {% trans "minutes" %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-body row g-4">
+                    <div class="card-title">
+                        <h5>{% trans "Confirmation" %}</h5>
+                    </div>
+                    {% if perms.core.can_view_prices %}
+                        <p class="mt-0 mb-0">
+                            {% trans "Funds are debited after registering an order in Reyden-X" %}
+                        </p>
+                        <div>
+                            <div class="alert alert-secondary" role="alert">
+                                <h5 class="display-6">
+                                    {% trans "TOTAL:" %}
+                                </h5>
+                                <span class="display-6"><i class="bx bx-{{ currency }}"></i></span>
+                                <span class="display-4" id="total">0</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="mt-0">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="aggreement" checked="">
+                            <label class="form-check-label" for="aggreement">
+                                {% trans "I confirm that the content on the selected channel does not violate the rules of streaming platforms and the copyrights of third parties" %}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="d-grid gap-2 col-xs-12 mx-auto">
+                            <div id="errors"></div>
+                            <button class="btn btn-primary" type="submit" id="createNewOrder">
+                                {% trans "Create Order" %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% load i18n %}
+
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+  {% include "internal/include/logo.html" %}
+
+  <div class="menu-inner-shadow"></div>
+
+  <ul class="menu-inner py-1">
+    {% with request.resolver_match.url_name as url_name %}
+      {% if perms.core.can_view_twitch_orders or perms.core.can_create_twitch_orders %}
+        <li class="menu-item {% if url_name == "twitch" or url_name == "new-twitch" or twitch_active %}active{% endif %}">
+          <a href="{% url "internal:twitch" %}"
+            class="menu-link">
+            <i class="menu-icon bx bxl-twitch"></i>
+            <div>{% trans "Twitch" %}</div>
+          </a>
+        </li>
+      {% endif %}
+
+      {% if perms.core.can_view_youtube_orders or perms.core.can_create_youtube_orders %}
+        <li class="menu-item {% if url_name == "youtube" or url_name == "new-youtube" or youtube_active %}active{% endif %}">
+          <a href="{% url "internal:youtube" %}"
+            class="menu-link">
+            <i class="menu-icon bx bxl-youtube"></i>
+            <div>{% trans "YouTube" %}</div>
+          </a>
+        </li>
+      {% endif %}
+    {% endwith %}
+    <li class="menu-header small text-uppercase">
+      <span class="menu-header-text">
+        {% trans "Management" %}
+      </span>
+    </li>
+
+    {% if user.is_superuser %}
+      <li class="menu-item">
+        <a href="{% url "internal:add-user" %}" class="menu-link">
+          <i class="menu-icon bx bx-user-plus"></i>
+          <div>{% trans "Add User" %}</div>
+        </a>
+      </li>
+      <li class="menu-item">
+        <a href="{% url "admin:index" %}" class="menu-link" target="_blank">
+          <i class="menu-icon bx bx-check-shield"></i>
+          <div>{% trans "Administration" %}</div>
+        </a>
+      </li>
+    {% endif %}
+    
+    <li class="menu-item">
+      <a href="{% url "unauthenticated:logout" %}" class="menu-link">
+        <i class="menu-icon bx bx-log-out"></i>
+        <div>{% trans "Logout" %}</div>
+      </a>
+    </li>
+  </ul>
+</aside>

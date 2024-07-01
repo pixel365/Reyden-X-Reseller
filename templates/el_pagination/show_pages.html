@@ -1,0 +1,5 @@
+<ul class="pagination justify-content-end mt-3">
+    {% for page in pages %}
+        {{ page.render_link|default:'<li class="page-item" style="margin: 0 9px">...</li>' }}
+    {% endfor %}
+</ul>

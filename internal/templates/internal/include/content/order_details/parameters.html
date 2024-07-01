@@ -1,0 +1,91 @@
+{% load i18n %}
+
+<div class="card mb-4">
+    <div class="card-body row g-4">
+        <div class="card-title">
+            <h5>{% trans "Order parameters" %}</h5>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12 col-md-4">
+                <label class="form-label" for="orderDetailViewers">
+                    {% trans "Viewers" %}
+                </label>
+                <input type="number" id="orderDetailViewers" class="form-control" 
+                    value="{{ order.viewers }}">
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <label class="form-label">
+                    {% trans "Clicks" %}
+                </label>
+                <h6 class="mb-0">{{ order.clicks }}</h6>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <label class="form-label">
+                    {% trans "Views" %}
+                </label>
+                <h6 class="mb-0">
+                    {{ order.views }} {% trans "from" %} {{ order.ordered_views }}
+                </h6>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="orderDetailSmoothGain"{% if order.details.parameters.even_distribution %} checked="checked"{% endif %}>
+                    <label class="form-check-label" for="orderDetailSmoothGain">
+                        {% trans "Smooth gain of viewers after the start" %}
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-12" id="orderDetailSmoothPeriodArea"{% if not order.details.parameters.even_distribution %} style="display:none"{% endif %}>
+                <div>
+                    <label for="orderDetailSmoothPeriod" class="form-label">
+                        {% trans "Period of smooth gain of viewers" %}
+                    </label>
+                    <div class="input-group">
+                        <input type="number" id="orderDetailSmoothPeriod" class="form-control" value="{{ order.details.parameters.even_distribution_time }}">
+                        <span class="input-group-text">
+                            {% trans "minutes" %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <label for="orderDetailLaunchMode" class="form-label">
+                    {% trans "Launch parameters" %}
+                </label>
+                {% with order.details.parameters.launch_mode as launch %}
+                <select id="orderDetailLaunchMode" class="form-select form-select">
+                    <option value="auto"{% if launch == "auto" %} selected{% endif %}>
+                        {% trans "Automatically when the stream is on" %}
+                    </option>
+                    <option value="manual"{% if launch == "manual" %} selected{% endif %}>
+                        {% trans "Manual launch" %}
+                    </option>
+                    <option value="delay"{% if launch == "delay" %} selected{% endif %}>
+                        {% trans "Delayed launch after the stream begins" %}
+                    </option>
+                </select>
+                {% endwith %}
+            </div>
+            <div class="col-md-12 mt-3" id="orderDetailDelayLaunchArea"{% if not order.details.parameters.delay %} style="display:none"{% endif %}>
+                <div>
+                    <label for="delayLaunchPeriod" class="form-label">
+                        {% trans "Delay the launch for" %}
+                    </label>
+                    <div class="input-group">
+                        <input type="number" id="orderDetailDelayLaunchPeriod" class="form-control" value="{{ order.details.parameters.delay_time }}">
+                        <span class="input-group-text">
+                            {% trans "minutes" %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

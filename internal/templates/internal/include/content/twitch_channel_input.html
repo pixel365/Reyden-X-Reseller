@@ -1,0 +1,12 @@
+{% load i18n %}
+
+<label for="channelInfo" class="form-label">
+    {% trans "Twitch ID" %}
+</label>
+<input type="text" class="form-control" 
+    id="channelInfo" 
+    placeholder="{% trans "Enter Twitch Channel ID" %}" 
+    aria-describedby="channelInfoHelp">
+<div id="channelInfoHelp" class="form-text">
+    {% trans "Twitch Channel Identifier: 123456789" %}
+</div>

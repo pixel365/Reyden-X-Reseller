@@ -1,0 +1,61 @@
+{% load i18n %}
+
+<div class="card">
+    <div class="card-body row g-4">
+        <div class="card-title">
+            <h5>{% trans "Cost and tariff" %}</h5>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-6">
+                <label class="form-label mt-0">
+                    {% trans "Category" %}
+                </label><br />
+                {{ order.tariff.category }}
+            </div>
+            <div class="col-sm-12 col-md-6">
+                <label class="form-label mt-0">
+                    {% trans "Geoparameters" %}
+                </label><br />
+                {{ order.tariff }}
+            </div>
+        </div>
+        {% if perms.core.can_view_prices %}
+            <div>
+                <div class="alert alert-secondary" role="alert">
+                    <h5 class="display-6">
+                        {% trans "TOTAL:" %}
+                    </h5>
+                    <span class="display-6"><i class="bx bx-{{ currency }}"></i></span>
+                    <span class="display-5">{{ order.cost }}</span>
+                </div>
+            </div>
+        {% endif %}
+        <div class="row">
+            <label class="form-label mt-0">
+                {% trans "Balance on order" %}
+            </label>
+            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                <div>{% trans "View" %}</div>
+                <div>{{ order.views_balance }}</div>
+            </div>
+            {% if perms.core.can_view_prices %}
+                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                    <div>{% trans "Money" %}</div>
+                    <div><i class="bx bx-{{ currency }}"></i>{{ order.money_balance }}</div>
+                </div>
+            {% endif %}
+        </div>
+        <hr class="mt-3 mb-3" />
+        <div class="mt-0">
+            <label class="form-label mt-0">
+                {% trans "Progress" %}
+            </label>
+            <div class="progress">
+                <div class="progress-bar bg-{{ order.progress_color }}" role="progressbar" 
+                    style="width: {{ order.progress }}%" aria-valuenow="{{ order.progress }}" 
+                    aria-valuemin="0" 
+                    aria-valuemax="100"></div>
+            </div>
+        </div>
+    </div>
+</div>

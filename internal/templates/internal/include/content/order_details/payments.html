@@ -1,0 +1,35 @@
+{% load i18n %}
+
+{% if perms.core.can_view_prices %}
+<div class="card mt-4">
+    <div class="card-body row g-4">
+        <div class="card-title">
+            <h5>{% trans "Payments" %}</h5>
+        </div>
+        <div class="table-responsive text-nowrap mt-0">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Amount" %}</th>
+                        <th>{% trans "Views" %}</th>
+                        <th>{% trans "Date" %}</th>
+                    </tr>
+                </thead>
+                <tbody class="table-border-bottom-0">
+                    {% for payment in payments %}
+                        <tr>
+                            <td><i class="bx bx-{{ currency }}"></i>{{ payment.amount }}</td>
+                            <td>{{ payment.views }}</td>
+                            <td>
+                                {% if payment.payed_at %}
+                                    {{ payment.payed_at }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}

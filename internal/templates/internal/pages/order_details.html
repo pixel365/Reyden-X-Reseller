@@ -1,0 +1,23 @@
+{% extends "internal/layout.html" %}
+
+{% load i18n %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row">
+        {% csrf_token %}
+        <div class="col-sm-12">
+            {% include "internal/include/content/order_details/info.html" %}
+        </div>
+        <div class="col-lg-7 mb-4">
+            {% include "internal/include/content/order_details/parameters.html" %}
+            {% include "internal/include/content/order_details/stats.html" %}
+            {% include "internal/include/content/order_details/domains.html" %}
+        </div>
+        <div class="col-lg-5 mb-4">
+            {% include "internal/include/content/order_details/cost.html" %}
+            {% include "internal/include/content/order_details/payments.html" %}
+        </div>
+    </div>
+</div>
+{% endblock %}

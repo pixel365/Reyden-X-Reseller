@@ -1,0 +1,130 @@
+{% extends "internal/layout.html" %}
+
+{% load i18n %}
+{% load el_pagination_tags %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="card mb-4">
+        <div class="d-flex align-items-center card-header">
+            <h5 class="mb-0">
+                Pagination<br />
+                <small class="text-light fw-medium">Basic</small>
+            </h5>
+            <div class="d-flex align-items-center ms-auto">
+                {% if show_filter %}
+                    <form method="get" action="{{ request.path }}" class="d-flex align-items-center ms-auto">
+                        <div class="ms-auto" style="margin-right: 10px;">
+                            <select class="form-select" name="s">
+                                <option value="">{% trans "All Orders" %}</option>
+                                {% for status in statuses %}
+                                    <option value="{{ status }}">{{ status }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="d-flex align-items-center ms-auto" style="margin-right:20px;">
+                            <input type="text" class="form-control" style="margin-right:10px;"
+                                name="q" 
+                                placeholder="{% trans "Channel name or order number" %}" />
+                            <button type="submit" class="btn btn-primary">
+                                {% trans "Search" %}
+                            </button>
+                        </div>
+                    </form>
+                {% endif %}
+                {% if create_order_url %}
+                    <a href="{{ create_order_url }}" class="btn btn-primary ms-auto">
+                        {% trans "Create Order" %}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive text-nowrap">
+            <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>{% trans "ID" %}</th>
+                    <th>{% trans "Content" %}</th>
+                    <th>{% trans "Tariff" %}</th>
+                    {% if perms.core.can_view_prices %}
+                        <th>{% trans "Price" %}</th>
+                    {% endif %}
+                    <th>{% trans "Viewers" %}</th>
+                    <th>{% trans "Views" %}</th>
+                    <th>{% trans "Clicks" %}</th>
+                    <th>{% trans "Status" %}</th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                {% for item in page_obj %}
+                    <tr>
+                        <td>
+                            <a href="{% url "internal:order" pk=item.pk %}">
+                                <span class="fw-medium">
+                                    #{{ item.external_id }}
+                                </span>
+                            </a>
+                            <small class="text-muted d-block">
+                                {{ item.real_created_at }}
+                            </small>
+                        </td>
+                        <td>
+                            {% include "internal/include/content/list_content_info.html" with order=item %}
+                        </td>
+                        <td>
+                            {{ item.tariff }}
+                        </td>
+                        {% if perms.core.can_view_prices %}
+                            <td>
+                                <span>
+                                    {{ item.cost }}<i class="bx bx-{{ currency }}"></i>
+                                </span>
+                                <br />
+                                <a href="{% url "internal:order" pk=item.pk %}">
+                                    <small class="fw-medium">
+                                        {% trans "Pay" %}
+                                    </small>
+                                </a>
+                            </td>
+                        {% endif %}
+                        <td>
+                            {{ item.viewers }}
+                        </td>
+                        <td>
+                            {{ item.views }}/<span class="text-muted">{{ item.ordered_views }}</span>
+                            <small class="text-muted d-block">
+                                {% if item.complete == 0.0 %}
+                                    <span class="text-muted fw-medium">{{ item.complete }}%</span> 
+                                {% elif item.complete > 0 and item.complete <= 50  %}
+                                    <span class="text-success fw-medium">{{ item.complete }}%</span> 
+                                {% elif item.complete > 50 and item.complete <= 90  %}
+                                    <span class="text-warning fw-medium">{{ item.complete }}%</span> 
+                                {%elif item.complete > 90 %}
+                                    <span class="text-danger fw-medium">{{ item.complete }}%</span> 
+                                {% endif %}
+
+                                {% trans "complete" %}
+                            </small>
+                        </td>
+                        <td>
+                            {{ item.clicks }}
+                        </td>
+                        <td>
+                            {{ item.status_badge|safe }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% paginate pages %}
+        {% show_pages %}
+        </div>
+    </div>
+</div>
+{% endblock %}

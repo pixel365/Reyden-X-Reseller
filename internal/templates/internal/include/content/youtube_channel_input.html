@@ -1,0 +1,12 @@
+{% load i18n %}
+
+<label for="channelInfo" class="form-label">
+    {% trans "YouTube Channel URL" %}
+</label>
+<input type="text" class="form-control" 
+    id="channelInfo" 
+    placeholder="{% trans "Enter YouTube Channel URL" %}" 
+    aria-describedby="channelInfoHelp">
+<div id="channelInfoHelp" class="form-text">
+    {% trans "Example: https://www.youtube.com/@ThePrimeTimeagen" %}
+</div>

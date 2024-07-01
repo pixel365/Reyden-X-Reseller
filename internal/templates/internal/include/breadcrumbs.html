@@ -1,0 +1,23 @@
+{% load i18n %}
+
+{% if breadcrumbs %}
+  <div class="container-xxl flex-grow-1 container-p-y pb-0">
+    <div class="card">
+      <div class="card-body">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            {% for breadcrumb in breadcrumbs %}
+              {% if breadcrumb.url %}
+                <li class="breadcrumb-item">
+                  <a href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a>
+                </li>
+              {% else %}
+                <li class="breadcrumb-item active" aria-current="page">{{ breadcrumb.name }}</li>
+              {% endif %}
+            {% endfor %}
+          </ol>
+        </nav> 
+      </div>
+    </div>
+  </div>
+{% endif %}
