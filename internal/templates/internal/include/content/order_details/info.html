@@ -45,19 +45,19 @@
                 {{ order.status_badge|safe }}
             </div>
             <div class="col-md-4">
-                {% if order.available_action %}
+                {% if order.available_action and can_edit %}
                     {% with order.available_action as action %}
-                    <button class="btn btn-{{ action.color }}" id="orderDetailAction" 
-                        data-action="{{ action.action }}">
-                        {{ action.text }}
-                    </button>
+                        <button class="btn btn-{{ action.color }}" id="orderDetailAction" 
+                            data-action="{{ action.action }}">
+                            {{ action.text }}
+                        </button>
                     {% endwith %}
                 {% endif %}
 
-                {% if order.can_cancel %}
-                <button class="btn btn-outline-primary" id="orderDetailCancel">
-                    {% trans "Complete the order" %}
-                </button>
+                {% if order.can_cancel and can_edit %}
+                    <button class="btn btn-outline-primary" id="orderDetailCancel">
+                        {% trans "Complete the order" %}
+                    </button>
                 {% endif %}
             </div>
         </div>

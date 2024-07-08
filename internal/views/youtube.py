@@ -21,6 +21,8 @@ _check_perms = partial(
     perms=(
         Perms.CAN_VIEW_YOUTUBE_ORDERS,
         Perms.CAN_CREATE_YOUTUBE_ORDERS,
+        Perms.CAN_VIEW_OTHER_YOUTUBE_ORDERS,
+        Perms.CAN_EDIT_OTHER_YOUTUBE_ORDERS,
     ),
 )
 
@@ -35,7 +37,12 @@ class YouTubeView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         self.queryset = make_orders_queryset(
-            request=self.request, platform=Platform.YOUTUBE
+            request=self.request,
+            platform=Platform.YOUTUBE,
+            perms=(
+                Perms.CAN_VIEW_OTHER_YOUTUBE_ORDERS,
+                Perms.CAN_EDIT_OTHER_YOUTUBE_ORDERS,
+            ),
         )
         ordering = self.get_ordering()
         if ordering:

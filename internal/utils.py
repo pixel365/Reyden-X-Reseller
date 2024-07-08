@@ -1,12 +1,19 @@
 from django.http import HttpRequest
 from django.db.models import QuerySet, Q
 
-from core.helpers import OrderStatus, Platform
+from core.helpers import OrderStatus, Platform, Perms
 from core.models.order import Order
 
 
-def make_orders_queryset(request: HttpRequest, platform: Platform) -> QuerySet:
+def make_orders_queryset(
+    request: HttpRequest, platform: Platform, perms: tuple[Perms]
+) -> QuerySet:
     filter = {}
+    user = request.user
+
+    if not user.has_perms(perms):
+        filter["user"] = user
+
     s = request.GET.get("s", None)
     if s in {x for _, x in OrderStatus.__members__.items()}:
         filter["status"] = s

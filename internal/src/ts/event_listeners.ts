@@ -21,7 +21,7 @@ const opRequest = (action: "run" | "cancel" | "stop" | "increase_off", csrfmiddl
         success = response.ok
         if (success) {
             response.json().then((data: ITask) => {
-                toastr.success(`Change request completed successfully!<br />Task Id: ${data.id}<br /><a href="${data.url}" target="_blank">Click to check execution status</a>`)
+                toastr.success(`Change request completed successfully!<br />Task Id: ${data.id}`)
             })
         }
     }).catch(e => {
@@ -52,7 +52,7 @@ const changeRequest = (el: HTMLInputElement, action: string, value: number, csrf
         success = response.ok
         if (success) {
             response.json().then((data: ITask) => {
-                toastr.success(`Change request completed successfully!<br />Task Id: ${data.id}<br /><a href="${data.url}" target="_blank">Click to check execution status</a>`)
+                toastr.success(`Change request completed successfully!<br />Task Id: ${data.id}`)
             })
         }
     }).catch(e => {
@@ -366,7 +366,7 @@ export const eventListeners = () => {
                 }).then(response => {
                     if (response.ok) {
                         response.json().then((data: ITaskStatus) => {
-                            const m = `Task: ${task.id}<br />URL: <a href="${task.url}" target="_blank">${task.url}</a>`
+                            const m = `Task: ${task.id}`
                             switch (data.status) {
                                 case "pending":
                                     taskProgress.innerHTML += `<div class="alert alert-info" role="alert">${m}<br />Status: Pending</div>`

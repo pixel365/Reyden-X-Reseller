@@ -10,6 +10,7 @@ from django.http.response import (
 from django.urls import reverse_lazy
 from django.views.generic import DetailView
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import PermissionDenied
 
 from core.mixins import LoginRequiredMixin
 from core.models.domain_stats import DomainStats
@@ -33,19 +34,38 @@ class OrderDetailsView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
+        user = self.request.user
+        is_superuser = user.is_superuser
+        can_edit = is_superuser or self.object.user == user
+        can_view = is_superuser or self.object.user == user
 
-        perms: list[Perms] = []
+        edit_perms: list[Perms] = []
+        view_perms: list[Perms] = []
 
         if self.object.platform == Platform.TWITCH:
             context["twitch_active"] = True
-            perms = [Perms.CAN_VIEW_TWITCH_ORDERS, Perms.CAN_CREATE_TWITCH_ORDERS]
+            edit_perms = [
+                Perms.CAN_EDIT_OTHER_TWITCH_ORDERS,
+            ]
+            view_perms = [
+                Perms.CAN_VIEW_OTHER_TWITCH_ORDERS,
+            ]
 
         if self.object.platform == Platform.YOUTUBE:
             context["youtube_active"] = True
-            perms = [Perms.CAN_VIEW_YOUTUBE_ORDERS, Perms.CAN_CREATE_YOUTUBE_ORDERS]
+            edit_perms = [
+                Perms.CAN_EDIT_OTHER_YOUTUBE_ORDERS,
+            ]
+            view_perms = [
+                Perms.CAN_VIEW_OTHER_YOUTUBE_ORDERS,
+            ]
 
-        if not self.request.user.has_perms(perms):
-            return HttpResponseForbidden()
+        can_view = can_view or user.has_perms(view_perms)
+        can_edit = can_edit or user.has_perms(edit_perms)
+
+        if not can_view:
+            if not can_edit:
+                raise PermissionDenied
 
         context["title"] = self.object
         context["breadcrumbs"] = [
@@ -57,13 +77,36 @@ class OrderDetailsView(LoginRequiredMixin, DetailView):
         ]
         context["domains"] = DomainStats.objects.filter(order=self.object)
         context["payments"] = Payment.objects.filter(order=self.object)
+        context["can_view"] = can_view
+        context["can_edit"] = can_edit
 
         return context
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         return super(OrderDetailsView, self).get(request, *args, **kwargs)
 
-    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> JsonResponse:
+    def post(
+        self, request: HttpRequest, *args: Any, **kwargs: Any
+    ) -> JsonResponse | HttpResponseForbidden:
+        user = self.request.user
+        is_superuser = user.is_superuser
+        can_edit = is_superuser or self.object.user == user
+
+        if not can_edit:
+            edit_perms: list[Perms] = []
+            if self.object.platform == Platform.TWITCH:
+                edit_perms = [
+                    Perms.CAN_EDIT_OTHER_TWITCH_ORDERS,
+                ]
+
+            if self.object.platform == Platform.YOUTUBE:
+                edit_perms = [
+                    Perms.CAN_EDIT_OTHER_YOUTUBE_ORDERS,
+                ]
+
+            if not user.has_perms(edit_perms):
+                return HttpResponseForbidden()
+
         client = RxClient()
         body = json.loads(request.body.decode())
         action = body.get("action", None)

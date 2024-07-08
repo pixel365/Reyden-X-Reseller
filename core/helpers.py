@@ -1,6 +1,7 @@
 from enum import StrEnum, auto
 from typing import NamedTuple
 
+
 class AvailableActon(NamedTuple):
     action: str
     color: str
@@ -12,10 +13,15 @@ class Perms(StrEnum):
     CAN_VIEW_BALANCE = auto()
 
     CAN_VIEW_TWITCH_ORDERS = auto()
-    CAN_CREATE_TWITCH_ORDERS = auto()
-    
+    CAN_CREATE_TWITCH_ORDERS = auto()  # overrides CAN_VIEW_TWITCH_ORDERS
+    CAN_VIEW_OTHER_TWITCH_ORDERS = auto()
+    CAN_EDIT_OTHER_TWITCH_ORDERS = auto()  # overrides CAN_VIEW_OTHER_TWITCH_ORDERS
+
     CAN_VIEW_YOUTUBE_ORDERS = auto()
-    CAN_CREATE_YOUTUBE_ORDERS = auto()
+    CAN_CREATE_YOUTUBE_ORDERS = auto()  # overrides CAN_VIEW_YOUTUBE_ORDERS
+    CAN_VIEW_OTHER_YOUTUBE_ORDERS = auto()
+    CAN_EDIT_OTHER_YOUTUBE_ORDERS = auto()  # overrides CAN_VIEW_OTHER_YOUTUBE_ORDERS
+
     ACTIVE = auto()
     REJECTED = auto()
     STOPPED = auto()

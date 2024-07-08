@@ -15,12 +15,28 @@ class User(AbstractUser):
 
     class Meta:
         permissions = [
-            (Perms.CAN_VIEW_PRICES.value, "Can see the cost in the tariffs"),
-            (Perms.CAN_VIEW_BALANCE.value, "Can see the balance on the main balance"),
-            (Perms.CAN_VIEW_TWITCH_ORDERS.value, "Can see Twitch orders"),
-            (Perms.CAN_VIEW_YOUTUBE_ORDERS.value, "Can see YouTube orders"),
+            (Perms.CAN_VIEW_PRICES.value, "Can view the cost in the tariffs"),
+            (Perms.CAN_VIEW_BALANCE.value, "Can view the balance on the main balance"),
+            (Perms.CAN_VIEW_TWITCH_ORDERS.value, "Can view Twitch orders"),
+            (Perms.CAN_VIEW_YOUTUBE_ORDERS.value, "Can view YouTube orders"),
+            (
+                Perms.CAN_VIEW_OTHER_TWITCH_ORDERS.value,
+                "Can view other Twitch orders",
+            ),
+            (
+                Perms.CAN_VIEW_OTHER_YOUTUBE_ORDERS.value,
+                "Can view other YouTUbe orders",
+            ),
             (Perms.CAN_CREATE_TWITCH_ORDERS.value, "Can create Twitch orders"),
             (Perms.CAN_CREATE_YOUTUBE_ORDERS.value, "Can create YouTube orders"),
+            (
+                Perms.CAN_EDIT_OTHER_TWITCH_ORDERS.value,
+                "Can edit other Twitch orders",
+            ),
+            (
+                Perms.CAN_EDIT_OTHER_YOUTUBE_ORDERS.value,
+                "Can edit other YouTube orders",
+            ),
         ]
 
     def __str__(self) -> str:

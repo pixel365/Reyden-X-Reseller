@@ -20,6 +20,8 @@ _check_perms = partial(
     perms=(
         Perms.CAN_VIEW_TWITCH_ORDERS,
         Perms.CAN_CREATE_TWITCH_ORDERS,
+        Perms.CAN_VIEW_OTHER_TWITCH_ORDERS,
+        Perms.CAN_EDIT_OTHER_TWITCH_ORDERS,
     ),
 )
 
@@ -34,7 +36,12 @@ class TwitchView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         self.queryset = make_orders_queryset(
-            request=self.request, platform=Platform.TWITCH
+            request=self.request,
+            platform=Platform.TWITCH,
+            perms=(
+                Perms.CAN_VIEW_OTHER_TWITCH_ORDERS,
+                Perms.CAN_EDIT_OTHER_TWITCH_ORDERS,
+            ),
         )
         ordering = self.get_ordering()
         if ordering:

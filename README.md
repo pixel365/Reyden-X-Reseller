@@ -77,12 +77,16 @@ pip install -r requirements.txt
 
 #### Basic user rights for working with data
 
-- Core | user | Can see the cost in the tariffs
-- Core | user | Can see the balance on the main balance
-- Core | user | Can see Twitch orders
-- Core | user | Can see YouTube orders
+- Core | user | Can view the cost in the tariffs
+- Core | user | Can view the balance on the main balance
+- Core | user | Can view Twitch orders
+- Core | user | Can view YouTube orders
 - Core | user | Can create Twitch orders
 - Core | user | Can create YouTube orders
+- Core | user | Can view other Twitch orders
+- Core | user | Can view other YouTube orders
+- Core | user | Can edit other Twitch orders
+- Core | user | Can edit other YouTube orders
 
 ### Development
 

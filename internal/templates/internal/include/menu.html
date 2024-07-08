@@ -7,25 +7,27 @@
 
   <ul class="menu-inner py-1">
     {% with request.resolver_match.url_name as url_name %}
-      {% if perms.core.can_view_twitch_orders or perms.core.can_create_twitch_orders %}
-        <li class="menu-item {% if url_name == "twitch" or url_name == "new-twitch" or twitch_active %}active{% endif %}">
-          <a href="{% url "internal:twitch" %}"
-            class="menu-link">
-            <i class="menu-icon bx bxl-twitch"></i>
-            <div>{% trans "Twitch" %}</div>
-          </a>
-        </li>
-      {% endif %}
+      {% with perms.core as p %}
+        {% if p.can_view_twitch_orders or p.can_create_twitch_orders or p.can_view_other_twitch_orders or p.can_edit_other_twitch_orders %}
+          <li class="menu-item {% if url_name == "twitch" or url_name == "new-twitch" or twitch_active %}active{% endif %}">
+            <a href="{% url "internal:twitch" %}"
+              class="menu-link">
+              <i class="menu-icon bx bxl-twitch"></i>
+              <div>{% trans "Twitch" %}</div>
+            </a>
+          </li>
+        {% endif %}
 
-      {% if perms.core.can_view_youtube_orders or perms.core.can_create_youtube_orders %}
-        <li class="menu-item {% if url_name == "youtube" or url_name == "new-youtube" or youtube_active %}active{% endif %}">
-          <a href="{% url "internal:youtube" %}"
-            class="menu-link">
-            <i class="menu-icon bx bxl-youtube"></i>
-            <div>{% trans "YouTube" %}</div>
-          </a>
-        </li>
-      {% endif %}
+        {% if p.can_view_youtube_orders or p.can_create_youtube_orders or p.can_view_other_youtube_orders or p.can_edit_other_youtube_orders %}
+          <li class="menu-item {% if url_name == "youtube" or url_name == "new-youtube" or youtube_active %}active{% endif %}">
+            <a href="{% url "internal:youtube" %}"
+              class="menu-link">
+              <i class="menu-icon bx bxl-youtube"></i>
+              <div>{% trans "YouTube" %}</div>
+            </a>
+          </li>
+        {% endif %}
+      {% endwith %}
     {% endwith %}
     <li class="menu-header small text-uppercase">
       <span class="menu-header-text">

@@ -11,8 +11,12 @@
                 <label class="form-label" for="orderDetailViewers">
                     {% trans "Viewers" %}
                 </label>
-                <input type="number" id="orderDetailViewers" class="form-control" 
-                    value="{{ order.viewers }}">
+                {% if can_edit %}
+                    <input type="number" id="orderDetailViewers" class="form-control" 
+                        value="{{ order.viewers }}">
+                {% else %}
+                    <input type="number" class="form-control" value="{{ order.viewers }}" disabled>
+                {% endif %}
             </div>
             <div class="col-sm-12 col-md-4">
                 <label class="form-label">
@@ -33,19 +37,27 @@
         <div class="row mt-3">
             <div class="col-md-12">
                 <div class="form-check form-switch mb-2">
-                    <input class="form-check-input" type="checkbox" id="orderDetailSmoothGain"{% if order.details.parameters.even_distribution %} checked="checked"{% endif %}>
+                    {% if can_edit %}
+                        <input class="form-check-input" type="checkbox" id="orderDetailSmoothGain"{% if order.details.parameters.even_distribution %} checked="checked"{% endif %}>
+                    {% else %}
+                        <input class="form-check-input" type="checkbox" {% if order.details.parameters.even_distribution %} checked="checked"{% endif %} disabled>
+                    {% endif %}
                     <label class="form-check-label" for="orderDetailSmoothGain">
                         {% trans "Smooth gain of viewers after the start" %}
                     </label>
                 </div>
             </div>
-            <div class="col-md-12" id="orderDetailSmoothPeriodArea"{% if not order.details.parameters.even_distribution %} style="display:none"{% endif %}>
+            <div class="col-md-12"{% if can_edit %} id="orderDetailSmoothPeriodArea"{% endif %}{% if not order.details.parameters.even_distribution %} style="display:none"{% endif %}>
                 <div>
                     <label for="orderDetailSmoothPeriod" class="form-label">
                         {% trans "Period of smooth gain of viewers" %}
                     </label>
                     <div class="input-group">
-                        <input type="number" id="orderDetailSmoothPeriod" class="form-control" value="{{ order.details.parameters.even_distribution_time }}">
+                        {% if can_edit %}
+                            <input type="number" id="orderDetailSmoothPeriod" class="form-control" value="{{ order.details.parameters.even_distribution_time }}">
+                        {% else %}
+                            <input type="number" class="form-control" value="{{ order.details.parameters.even_distribution_time }}" disabled>
+                        {% endif %}
                         <span class="input-group-text">
                             {% trans "minutes" %}
                         </span>
@@ -56,11 +68,12 @@
 
         <div class="row mt-3">
             <div class="col-md-12">
-                <label for="orderDetailLaunchMode" class="form-label">
+                <label{% if can_edit %} for="orderDetailLaunchMode"{% endif %} class="form-label">
                     {% trans "Launch parameters" %}
                 </label>
                 {% with order.details.parameters.launch_mode as launch %}
-                <select id="orderDetailLaunchMode" class="form-select form-select">
+                <select{% if can_edit %} id="orderDetailLaunchMode"{% endif %} 
+                    class="form-select form-select"{% if not can_edit %} disabled{% endif %}>
                     <option value="auto"{% if launch == "auto" %} selected{% endif %}>
                         {% trans "Automatically when the stream is on" %}
                     </option>
@@ -73,13 +86,17 @@
                 </select>
                 {% endwith %}
             </div>
-            <div class="col-md-12 mt-3" id="orderDetailDelayLaunchArea"{% if not order.details.parameters.delay %} style="display:none"{% endif %}>
+            <div class="col-md-12 mt-3"{% if can_edit %} id="orderDetailDelayLaunchArea"{% endif %}{% if not order.details.parameters.delay %} style="display:none"{% endif %}>
                 <div>
                     <label for="delayLaunchPeriod" class="form-label">
                         {% trans "Delay the launch for" %}
                     </label>
                     <div class="input-group">
-                        <input type="number" id="orderDetailDelayLaunchPeriod" class="form-control" value="{{ order.details.parameters.delay_time }}">
+                        {% if can_edit %}
+                            <input type="number" id="orderDetailDelayLaunchPeriod" class="form-control" value="{{ order.details.parameters.delay_time }}">
+                        {% else %}
+                            <input type="number" class="form-control" value="{{ order.details.parameters.delay_time }}" disabled    >
+                        {% endif %}
                         <span class="input-group-text">
                             {% trans "minutes" %}
                         </span>
