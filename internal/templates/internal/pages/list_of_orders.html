@@ -8,8 +8,7 @@
     <div class="card mb-4">
         <div class="d-flex align-items-center card-header">
             <h5 class="mb-0">
-                Pagination<br />
-                <small class="text-light fw-medium">Basic</small>
+                {{ title }}
             </h5>
             <div class="d-flex align-items-center ms-auto">
                 {% if show_filter %}
@@ -84,12 +83,6 @@
                                 <span>
                                     {{ item.cost }}<i class="bx bx-{{ currency }}"></i>
                                 </span>
-                                <br />
-                                <a href="{% url "internal:order" pk=item.pk %}">
-                                    <small class="fw-medium">
-                                        {% trans "Pay" %}
-                                    </small>
-                                </a>
                             </td>
                         {% endif %}
                         <td>
