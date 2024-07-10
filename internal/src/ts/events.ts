@@ -17,6 +17,6 @@ export const Events = {
     ChangeIncreaseValue: "change_increase_value",
     IncreaseOn: "increase_on",
     AddViews: "add_views",
-    ChangeLaunchMode: "ChangeLaunchMode",
-    ChangeDelayPeriod: "ChangeDelayPeriod",
+    ChangeLaunchMode: "change_launch_mode",
+    ChangeDelayTime: "change_delay_time",
 }

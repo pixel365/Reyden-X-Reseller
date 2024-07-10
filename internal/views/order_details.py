@@ -21,6 +21,7 @@ from core.models.payment import Payment
 from pyreydenx import Client as RxClient
 from pyreydenx.action import Action as RxAction
 from pyreydenx.model.task import ActionResult
+from pyreydenx.model.launch_params import LaunchParams, LaunchMode
 
 from core.models.task import Task
 
@@ -111,14 +112,13 @@ class OrderDetailsView(LoginRequiredMixin, DetailView):
         body = json.loads(request.body.decode())
         action = body.get("action", None)
         result = None
+        order_id = self.get_object().external_id
 
         match action:
             case "pay":
                 pass
             case "run" | "cancel" | "stop" | "increase_off":
-                result = RxAction.__dict__[action](
-                    client, self.get_object().external_id
-                )
+                result = RxAction.__dict__[action](client, order_id)
             case (
                 "change_online_value"
                 | "change_increase_value"
@@ -128,10 +128,20 @@ class OrderDetailsView(LoginRequiredMixin, DetailView):
                 try:
                     value = int(body.get("value", 0))
                     if value > 0:
-                        result = RxAction.__dict__[action](
-                            client, self.get_object().external_id, value
-                        )
-                except (ValueError, TypeError):
+                        result = RxAction.__dict__[action](client, order_id, value)
+                except ValueError:
+                    pass
+            case "change_launch_mode":
+                try:
+                    delay_time = int(body.get("delay_time", 0))
+                    launch_params = LaunchParams(
+                        mode=LaunchMode(body.get("mode", LaunchMode.AUTO)),
+                        delay_time=delay_time,
+                    )
+                    result = RxAction.change_launch_mode(
+                        client, order_id, launch_params
+                    )
+                except ValueError:
                     pass
             case _:
                 result = None

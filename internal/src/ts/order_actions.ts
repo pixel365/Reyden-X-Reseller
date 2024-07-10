@@ -71,7 +71,7 @@ export const orderActions = () => {
     if (delayPeriod) {
         delayPeriod.onchange = () => {
             const value = parseInt(delayPeriod.value)
-            window.dispatchEvent(new CustomEvent(Events.ChangeDelayPeriod, {
+            window.dispatchEvent(new CustomEvent(Events.ChangeDelayTime, {
                 detail: {
                     value: isNaN(value) ? 0 : value,
                     csrfmiddlewaretoken: csrfmiddlewaretoken.value

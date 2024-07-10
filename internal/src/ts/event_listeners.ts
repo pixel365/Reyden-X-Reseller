@@ -66,6 +66,41 @@ const changeRequest = (el: HTMLInputElement, action: string, value: number, csrf
     return success
 }
 
+const changeLaunchModeRequest = (el: HTMLInputElement, mode: "auto" | "manual" | "delay", 
+    delayTime: number, csrfmiddlewaretoken: string): boolean => {
+    let success = false
+    el.disabled = true
+    el.classList.add("readonly-input")
+
+    const headers = new Headers(),
+        m = new Map<string, string|number>()
+    headers.append("X-CSRFToken", csrfmiddlewaretoken)
+    m.set("action", "change_launch_mode")
+    m.set("mode", mode)
+    m.set("delay_time", delayTime)
+
+    fetch(window.location.pathname, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(Object.fromEntries(m))
+    }).then(response => {
+        success = response.ok
+        if (success) {
+            response.json().then((data: ITask) => {
+                toastr.success(`Change request completed successfully!<br />Task Id: ${data.id}`)
+            })
+        }
+    }).catch(e => {
+        console.error(e)
+        toastr.error("Failure to accept change request")
+    }).finally(() => {
+        el.disabled = false
+        el.classList.remove("readonly-input")
+    })
+
+    return success
+}
+
 export const eventListeners = () => {
     window.addEventListener(Events.OrderInitiated, () => {
         const newOrder = (<any>window).new_order
@@ -472,36 +507,39 @@ export const eventListeners = () => {
              delayLaunchPeriod = <HTMLInputElement>document.getElementById("orderDetailDelayLaunchPeriod")
             if (delayLaunchArea && delayLaunchPeriod) {
                 const mode = ev.detail.value
-                console.log("ChangeLaunchMode", mode)
                 if (mode == "delay") {
                     delayLaunchArea.style.display = ""
                     let minutes = parseInt(delayLaunchPeriod.value)
                     if (isNaN(minutes))
-                        minutes = 10
+                        minutes = 5
 
-                    if (minutes <= 0)
-                        minutes = 1
+                    if (minutes < 5)
+                        minutes = 5
 
                     if (minutes > 240)
                         minutes = 240
 
                     delayLaunchPeriod.value = minutes.toString()
+                    changeLaunchModeRequest(delayLaunchPeriod, "delay", minutes, ev.detail.csrfmiddlewaretoken)
                 } else {
                     delayLaunchArea.style.display = "none"
 
                     switch (mode) {
                         case "auto":
                         case "manual":
+                            changeLaunchModeRequest(delayLaunchPeriod, mode, 0, ev.detail.csrfmiddlewaretoken)
                             break
                     }
                 }
             }
     }) as EventListener)
 
-    window.addEventListener(Events.ChangeDelayPeriod, ((ev: CustomEvent) => {
+    window.addEventListener(Events.ChangeDelayTime, ((ev: CustomEvent) => {
         if (ev.detail.value > 0) {
-            //todo: change node to 'delay'
-            console.log("ChangeDelayPeriod", ev.detail.value)
+            const delayLaunchPeriod = <HTMLInputElement>document.getElementById("orderDetailDelayLaunchPeriod")
+            if (delayLaunchPeriod) {
+                changeLaunchModeRequest(delayLaunchPeriod, "delay", ev.detail.value, ev.detail.csrfmiddlewaretoken)
+            }
         }
     }) as EventListener)
 }
