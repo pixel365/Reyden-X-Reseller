@@ -27,15 +27,25 @@
                     </h5>
                     <span class="display-6"><i class="bx bx-{{ currency }}"></i></span>
                     <span class="display-5">{{ order.cost }}</span>
+                    <h5 class="mb-0">
+                        <small class="text-muted">
+                            <i class="bx bx-{{ currency }}"></i> 
+                            {{ order.tariff.details.price }} 
+                            {% trans "per view" %}
+                        </small>
+                    </h5>
                 </div>
             </div>
         {% endif %}
+
+        {% include "internal/include/content/order_details/_add_views.html" %}
+
         <div class="row">
             <label class="form-label mt-0">
                 {% trans "Balance on order" %}
             </label>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                <div>{% trans "View" %}</div>
+                <div>{% trans "Views" %}</div>
                 <div>{{ order.views_balance }}</div>
             </div>
             {% if perms.core.can_view_prices %}

@@ -4,7 +4,6 @@ from typing import Any
 from django.http import HttpRequest
 from django.http.response import (
     HttpResponse as HttpResponse,
-    HttpResponseForbidden,
     JsonResponse,
 )
 from django.urls import reverse_lazy
@@ -86,9 +85,7 @@ class OrderDetailsView(LoginRequiredMixin, DetailView):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         return super(OrderDetailsView, self).get(request, *args, **kwargs)
 
-    def post(
-        self, request: HttpRequest, *args: Any, **kwargs: Any
-    ) -> JsonResponse | HttpResponseForbidden:
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> JsonResponse:
         user = self.request.user
         is_superuser = user.is_superuser
         can_edit = is_superuser or self.object.user == user
@@ -106,7 +103,7 @@ class OrderDetailsView(LoginRequiredMixin, DetailView):
                 ]
 
             if not user.has_perms(edit_perms):
-                return HttpResponseForbidden()
+                raise PermissionDenied
 
         client = RxClient()
         body = json.loads(request.body.decode())

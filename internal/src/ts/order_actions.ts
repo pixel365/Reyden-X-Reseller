@@ -6,6 +6,8 @@ export const orderActions = () => {
         smoothGain = <HTMLInputElement>document.getElementById("orderDetailSmoothGain"),
         smoothPeriod = <HTMLInputElement>document.getElementById("orderDetailSmoothPeriod"),
         delayPeriod = <HTMLInputElement>document.getElementById("orderDetailDelayLaunchPeriod"),
+        addViews = <HTMLInputElement>document.getElementById("orderDetailAddViews"),
+        addViewsTmp = <HTMLElement>document.getElementById("addViewsTmp"),
         action = <HTMLButtonElement>document.getElementById("orderDetailAction"),
         cancel = <HTMLButtonElement>document.getElementById("orderDetailCancel"),
         csrfmiddlewaretoken = <HTMLInputElement>document.querySelector(`input[name="csrfmiddlewaretoken"]`)
@@ -72,6 +74,34 @@ export const orderActions = () => {
         delayPeriod.onchange = () => {
             const value = parseInt(delayPeriod.value)
             window.dispatchEvent(new CustomEvent(Events.ChangeDelayTime, {
+                detail: {
+                    value: isNaN(value) ? 0 : value,
+                    csrfmiddlewaretoken: csrfmiddlewaretoken.value
+                }
+            }))
+        }
+    }
+
+    if (addViews) {
+        if (addViewsTmp) {
+            addViews.onkeyup = () => {
+                const value = parseInt(addViews.value),
+                    price = addViewsTmp.dataset.price
+                if (isNaN(value) || value < 1) {
+                    addViewsTmp.textContent = "0"
+                } else {
+                    if (price) {
+                        addViewsTmp.textContent = (value * parseFloat(price)).toFixed(2).toString()
+                    } else {
+                        addViewsTmp.textContent = "0"
+                    }
+                }
+            }
+        }
+
+        addViews.onchange = () => {
+            const value = parseInt(addViews.value)
+            window.dispatchEvent(new CustomEvent(Events.AddViews, {
                 detail: {
                     value: isNaN(value) ? 0 : value,
                     csrfmiddlewaretoken: csrfmiddlewaretoken.value

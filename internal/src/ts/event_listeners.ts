@@ -33,7 +33,8 @@ const opRequest = (action: "run" | "cancel" | "stop" | "increase_off", csrfmiddl
     return success
 }
 
-const changeRequest = (el: HTMLInputElement, action: string, value: number, csrfmiddlewaretoken: string): boolean => {
+const changeRequest = (el: HTMLInputElement, action: string, value: number, 
+    csrfmiddlewaretoken: string, callback: Function | null): boolean => {
     let success = false
     el.disabled = true
     el.classList.add("readonly-input")
@@ -52,6 +53,9 @@ const changeRequest = (el: HTMLInputElement, action: string, value: number, csrf
         success = response.ok
         if (success) {
             response.json().then((data: ITask) => {
+                if (callback instanceof Function) {
+                    callback()
+                }
                 toastr.success(`Change request completed successfully!<br />Task Id: ${data.id}`)
             })
         }
@@ -467,7 +471,7 @@ export const eventListeners = () => {
             }
 
             if (minutes > 0) {
-                changeRequest(smoothPeriod, Events.IncreaseOn, minutes, ev.detail.csrfmiddlewaretoken)
+                changeRequest(smoothPeriod, Events.IncreaseOn, minutes, ev.detail.csrfmiddlewaretoken, null)
             }
         }
     }) as EventListener)
@@ -476,7 +480,7 @@ export const eventListeners = () => {
         if (ev.detail.value > 0) {
             const el = <HTMLInputElement>document.getElementById("orderDetailViewers")
             if (el) {
-                changeRequest(el, Events.ChangeOnlineValue, ev.detail.value, ev.detail.csrfmiddlewaretoken)
+                changeRequest(el, Events.ChangeOnlineValue, ev.detail.value, ev.detail.csrfmiddlewaretoken, null)
             }
         }
     }) as EventListener)
@@ -485,19 +489,19 @@ export const eventListeners = () => {
         if (ev.detail.value > 0) {
             const el = <HTMLInputElement>document.getElementById("orderDetailSmoothPeriod")
             if (el) {
-                changeRequest(el, Events.ChangeIncreaseValue, ev.detail.value, ev.detail.csrfmiddlewaretoken)
+                changeRequest(el, Events.ChangeIncreaseValue, ev.detail.value, ev.detail.csrfmiddlewaretoken, null)
             }
         }
     }) as EventListener)
 
     window.addEventListener(Events.AddViews, ((ev: CustomEvent) => {
         if (ev.detail.value > 0) {
-            const el = <HTMLInputElement>document.getElementById("orderDetailAddViews")
-            if (el) {
-                const success = changeRequest(el, Events.AddViews, ev.detail.value, ev.detail.csrfmiddlewaretoken)
-                if (success) {
-                    //todo
-                }
+            const el = <HTMLInputElement>document.getElementById("orderDetailAddViews"),
+                closeBtn = <HTMLButtonElement>document.getElementById("closeAddViewsModal")
+            if (el && closeBtn) {
+                changeRequest(el, Events.AddViews, ev.detail.value, ev.detail.csrfmiddlewaretoken, () => {
+                    closeBtn.click()
+                })
             }
         }
     }) as EventListener)
