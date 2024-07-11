@@ -1,4 +1,4 @@
-Django==5.0.6
+Django==5.0.7
 httpx==0.27.0
 pyreydenx==1.0.10
 django-el-pagination@ git+https://github.com/pixel365/django-el-pagination@589dc0a5593c91bedc32f0358645c67bde5d4eb2
